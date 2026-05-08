@@ -1,0 +1,12 @@
+[package]
+name = "rscore"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+liblinear = "1.0.0"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

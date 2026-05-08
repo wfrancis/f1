@@ -7,6 +7,7 @@ tools/
 __pycache__/
 .DS_Store
 .claude/
+logs/
 
 # Kaggle competition data (download via `kaggle competitions download`)
 data/train.csv
@@ -54,6 +55,11 @@ submissions/v10_v7_blend.csv
 submissions/v10_v11_blend.csv
 submissions/best_l1_stack.csv
 submissions/best_85.csv
+submissions/archive_realmlp_avg_variants/
+submissions/best_blend_*
+submissions/best_rust_csweep_stack*
+submissions/rstack_liblinear_*
+submissions/rstack_realmlp4_*
 submissions/v2.csv
 submissions/v3way_blend.csv
 data/orig_teacher_oof.npy

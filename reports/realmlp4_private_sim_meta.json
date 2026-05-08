@@ -1,0 +1,37 @@
+{
+  "args": {
+    "names": [
+      "best_meta_bag_c008_s6",
+      "best_rust_csweep_stack",
+      "best_blend_meta_rust_w65",
+      "best_blend_meta_rust_multi_w100_620_280",
+      "rstack_realmlp4_c004_s42_j5",
+      "rstack_realmlp4_c006_s42_j5",
+      "rstack_realmlp4_c008_s42_j5",
+      "rstack_realmlp4_c012_s42_j5",
+      "v15_realmlp_avg4"
+    ],
+    "top": 0,
+    "ref": "best_meta_bag_c008_s6",
+    "seed": 20260508,
+    "public_frac": 0.2,
+    "n_strat": 300,
+    "n_race_year": 300,
+    "n_year": 100,
+    "min_auc": 0.85,
+    "out_prefix": "realmlp4_private_sim"
+  },
+  "n_rows": 439140,
+  "n_splits": 700,
+  "candidates": [
+    "rstack_realmlp4_c008_s42_j5",
+    "rstack_realmlp4_c006_s42_j5",
+    "rstack_realmlp4_c004_s42_j5",
+    "rstack_realmlp4_c012_s42_j5",
+    "best_rust_csweep_stack",
+    "best_blend_meta_rust_multi_w100_620_280",
+    "best_blend_meta_rust_w65",
+    "best_meta_bag_c008_s6",
+    "v15_realmlp_avg4"
+  ]
+}

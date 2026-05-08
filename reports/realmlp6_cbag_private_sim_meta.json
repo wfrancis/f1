@@ -1,0 +1,33 @@
+{
+  "args": {
+    "names": [
+      "best_meta_bag_c008_s6",
+      "rstack_realmlp6avg_c004_s42_j5",
+      "rstack_realmlp6avg_c006_s42_j5",
+      "rstack_realmlp6avg_c008_s42_j5",
+      "rstack_realmlp6avg_cbag_004_008",
+      "rstack_realmlp6avg_cbag_004_006_008",
+      "rstack_realmlp6avg_cbag_all4"
+    ],
+    "top": 0,
+    "ref": "best_meta_bag_c008_s6",
+    "seed": 20260508,
+    "public_frac": 0.2,
+    "n_strat": 350,
+    "n_race_year": 350,
+    "n_year": 120,
+    "min_auc": 0.85,
+    "out_prefix": "realmlp6_cbag_private_sim"
+  },
+  "n_rows": 439140,
+  "n_splits": 820,
+  "candidates": [
+    "rstack_realmlp6avg_cbag_004_006_008",
+    "rstack_realmlp6avg_cbag_all4",
+    "rstack_realmlp6avg_cbag_004_008",
+    "rstack_realmlp6avg_c004_s42_j5",
+    "rstack_realmlp6avg_c006_s42_j5",
+    "rstack_realmlp6avg_c008_s42_j5",
+    "best_meta_bag_c008_s6"
+  ]
+}
