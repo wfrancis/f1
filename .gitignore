@@ -18,6 +18,18 @@ data/playground-series-s6e5*
 # fastf1 cache (regenerable)
 data/fastf1_cache/
 
+# External datasets (download via kaggle datasets download — referenced in HANDOVER.md)
+data/weather/
+data/vault/
+data/blend_dataset/
+
+# v19 + experimental submission CSVs
+submissions/v19_*.csv
+submissions/conservative_*.csv
+submissions/stack_cons_*.csv
+submissions/safar1_replicate.csv
+submissions/v_three_*.csv
+
 # Large intermediate submission CSVs (only keep best_*)
 submissions/v15_*.csv
 submissions/v16_*.csv

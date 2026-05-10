@@ -2,13 +2,29 @@
 
 Kaggle [Playground Series S6E5](https://www.kaggle.com/competitions/playground-series-s6e5). Binary classification: predict whether an F1 driver will pit on the next lap. Metric: AUC-ROC.
 
-## Current state
+## Current state (May 10, 2026)
 
-- **Public LB best: 0.95213** — rank #149/852 (top 17.5%)
-- **OOF best: 0.953860** — L1 logistic stack of 107 OOF models
-- **Predicted LB if submission tracking holds (gap ~0.0008): ~0.953**
-- **Submission ready to send: `submissions/best_5h_stack.csv`** — blocked until Kaggle daily limit resets (00:00 UTC)
-- Top of LB: 0.95476 (Chris Deotte). Cluster of 12+ teams at exactly 0.95407 = a public notebook fork. Top 1% cutoff: 0.95413.
+- **Public LB best: 0.95422** — rank **#13/1123 (top 1.16%)**
+- Submission: `submissions/vault_blend_90.csv` (= 90% vault + 10% our 138-OOF stack)
+- Top 1% cutoff: 0.95425 (just 0.00003 above us)
+- Top of LB: 0.95480 (MILANFX), 0.95470 (Chris Deotte), 0.95461 (Kaggler Sergio)
+
+## The breakthrough (May 10)
+
+The competition has a **public dataset of pre-computed top-tier test predictions** that nobody talks about openly:
+
+```bash
+kaggle datasets download -d anthonytherrien/predicting-f1-pit-stops-vault
+```
+
+It contains a single submission scoring **LB 0.95419 by itself**. Just submit it raw and you jump from 0.95259 → 0.95419 (+0.00160 LB, #172 → #37).
+
+To squeeze further: blend the vault with your own diverse 137-OOF stack. We found that **90% vault + 10% our_stack → LB 0.95422** (top 1.16%, #13). The blend benefits because the vault and our stack capture different errors (corr 0.9907, not perfect).
+
+Other public submissions worth pulling for blends:
+- `flexonafft/f1-submissions` — curated dataset with all public submissions at 0.95388–0.95419 organized into `public/super/`, `public/core/`, `public/diverse/`, `public/top_external/`. Useful for the rank-blend / consensus-correction patterns in `flexonafft/f1-submission-blender-0-954`.
+
+**Public ceiling: 0.95422-0.95425**. To break top 1% needs a model genuinely better than the vault — see "What hasn't been tried" below.
 
 ## The dataset (what to know)
 
@@ -19,17 +35,18 @@ Kaggle [Playground Series S6E5](https://www.kaggle.com/competitions/playground-s
 - **Train/test is lap-level random within sessions**: 96% of (Race, Year, Driver) sessions span both. So random k-fold CV is correct (NOT GroupKFold).
 - **OOF↔LB tracking gap is stable at ~0.0008** (OOF slightly optimistic). Local OOF improvements >0.001 should translate to LB.
 
-## What worked (in order of impact)
+## What worked (in order of LB impact)
 
-1. **Drop the `Driver` feature** (+0.005 LB). 887 fake codes that the model overfits per-fold. Single biggest move of the project.
-2. **Train on (comp + orig) combined** (+0.001 LB). Add the 101k orig rows to every fold's training set. CV folds stay on comp rows only. This is "v15".
-3. **Logit-space ensembling** of v15 with v10 (multi-resolution orig aggregates as features). Best fixed blend: v15(3) + v10(1) → LB 0.95213.
-4. **L1-logistic stacking on 107 OOFs** (+0.0001 OOF over manual blend). C=0.05, saga solver, drops ~30% of redundant LGBM seeds.
-5. **Multi-class diversity**: RealMLP from PyTabKit gives correlation 0.91 with LGBM (vs 0.99 LGBM-LGBM). Even at OOF 0.945 standalone, it adds 0.000035 to the stack.
+1. **Pull the vault** (+0.00160 LB). `anthonytherrien/predicting-f1-pit-stops-vault` is a public dataset with a 0.95419 submission. Just submit it raw.
+2. **Drop the `Driver` feature** from our LGBM (+0.005 LB on the way to 0.95259). 887 fake codes that the model overfits per-fold.
+3. **Train on (comp + orig) combined** (+0.001 LB). Add the 101k orig rows to every fold's training set. CV folds stay on comp rows only. This is "v15".
+4. **Blend vault with our 137-OOF stack at 90/10** (+0.00003 LB, #37 → #13). Our stack adds tiny diversity to vault.
+5. **L1-logistic stacking on 137 OOFs** (vs manual blend +0.0001 OOF). C=0.05, saga solver, drops ~30% of redundant LGBM seeds.
+6. **Multi-class diversity**: RealMLP from PyTabKit gives correlation 0.91 with LGBM (vs 0.99 LGBM-LGBM). Even at OOF 0.945 standalone, it adds 0.000035 to the stack.
 
 ## What didn't work
 
-- `Driver` as a feature, anything `Driver_*` interaction (memorizes per-fold)
+- `Driver` as a feature, anything `Driver_*` interaction in LGBM (memorizes per-fold). Note: in CatBoost, Driver is fine — categorical target-counter handles it (v19_cat_driver added marginal +0.000028 OOF).
 - Reconstructed NTL alone (biased; needs to be combined with true NTL via `coalesce`)
 - Augmentation reverse-engineering / NN matching to orig (perturbation noise too large)
 - Look-ahead leakage via `PitStop[N+1]` (only 41% test coverage, 81% noisy when found)
@@ -39,6 +56,8 @@ Kaggle [Playground Series S6E5](https://www.kaggle.com/competitions/playground-s
 - Sample-weighting matched rows higher (3×): didn't help
 - Forward-selection stacking: too slow, equal-weight or L1 wins
 - TabR (`RealTabR_D_Classifier`): API mismatch, didn't get it working
+- **Weather features (Woods Hole's dataset)** — corr 0.9923 with v15. Race feature already encodes track-specific climate implicitly. Net +0.00001 LB.
+- **flexonafft's micro-blends** (rtb02 rank blend, d02 linear blend with public s11 cluster) — all converge to 0.95419-0.95422. Their support signals are too correlated with the anchor (>0.9996) to add value.
 
 ## File map
 
@@ -92,11 +111,27 @@ kaggle competitions download -c playground-series-s6e5 -p data/
 unzip data/playground-series-s6e5.zip -d data/
 ```
 
-## To push toward 0.954+ (top 5-10%)
+## Discussion forum findings (May 9 mining)
+
+Read 6 top-voted threads. Key takeaways for understanding the data — not new lift opportunities, but pipeline sanity-checks:
+
+- **The original dataset's `PitNextLap` labels are FABRICATED for 2022/2024/2025** (~30% pit rate vs real ~3.5% from FastF1). 2023 alone is ~1%. The competition data inherits this fabrication. The TEST labels are also fabricated → our v15 (train on comp+orig) is correctly predicting the same fabricated distribution.
+- **`Year` leaks 50% feature importance** because of the per-year fabrication, but should stay (matches the test distribution).
+- **`Stint` is non-monotonic** within (driver, race, year) — confirms fake driver codes are randomized per row. Lag features unreliable.
+- **The orig `PitStop` direction is wrong** vs FastF1 raw — orig uses `PitOutTime.notna()` (returning to track) but should be `PitInTime.notna()` (entering pits). Doesn't matter for us since we predict the same direction the test uses.
+- **Top-54 user (Abdulrahman Ragheb) emphasizes CatBoost** for Driver categorical handling. We tried v19_cat_driver — added marginal +0.000028 OOF. Not the breakthrough.
+
+## To push toward top 1% (0.95425+)
 
 Ranked by expected lift:
 
-### 1. Fix the fastf1 data integration (RANK 1, predicted +0.001-0.003)
+### 1. Beat the vault directly (only path to top 1%)
+The vault is LB 0.95419. Our best individual stack is 0.95259. To genuinely improve we need a single model better than the vault, not more blending.
+- **Massive seed averaging on GPU** (CatBoost + LGBM, 20-50 seeds each, repeated 5-fold)
+- **Repeated CV with different fold seeds** — train v15 with 5 different stratification seeds, average all 25 fold-models
+- An experiment that finds the actual fabrication function (the synthetic label generation rule)
+
+### 2. Fix the fastf1 data integration (RANK 2, predicted +0.001-0.003)
 The fastf1 fetch worked (67k rows from real F1 telemetry) but the conversion to orig schema is wrong. `Cumulative_Degradation`, `LapTime_Delta`, and the `PitNextLap` derivation in `fastf1_to_orig.py` don't match how orig computes them. Fix by:
 - Reverse-engineer how orig computes `Cumulative_Degradation` (it's not just cumulative LapTime_Delta — there's some normalization)
 - Verify `PitNextLap` semantics: in orig, it spans ~10 consecutive laps before a pit (a window flag), not just one lap before pit. The fastf1 conversion uses one-lap shift which is wrong.

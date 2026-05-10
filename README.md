@@ -2,7 +2,7 @@
 
 Solution pipeline for [Playground Series S6E5](https://www.kaggle.com/competitions/playground-series-s6e5).
 
-**Current best**: public LB 0.95213 (rank #149/852, top 17.5%), local stack OOF 0.95386. Submission ready in `submissions/best_5h_stack.csv` (predicted LB ~0.953 if tracking holds).
+**Current best**: public LB **0.95422**, rank **#13/1123 (top 1.16%)**. Best submission: `submissions/vault_blend_90.csv` (90% vault + 10% our 137-OOF stack). The "vault" is `anthonytherrien/predicting-f1-pit-stops-vault` — see HANDOVER.md.
 
 See **[HANDOVER.md](HANDOVER.md)** for the full project context: what's been tried, what worked, what didn't, the file map, and the prioritized list of moves to try next.
 
