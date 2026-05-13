@@ -1,0 +1,28 @@
+{
+  "args": {
+    "names": [
+      "rstack_realmlp6avg_meta_c014_s6",
+      "rstack_realmlp6avg_meta_c014_s10",
+      "rstack_realmlp6avg_meta_c016_s10",
+      "rstack_realmlp6avg_meta_c012_s10"
+    ],
+    "top": 0,
+    "ref": "best_meta_bag_c008_s6",
+    "seed": 20260508,
+    "public_frac": 0.2,
+    "n_strat": 300,
+    "n_race_year": 300,
+    "n_year": 120,
+    "min_auc": 0.85,
+    "out_prefix": "realmlp6_meta_private_sim_c014s6"
+  },
+  "n_rows": 439140,
+  "n_splits": 720,
+  "candidates": [
+    "rstack_realmlp6avg_meta_c014_s10",
+    "rstack_realmlp6avg_meta_c016_s10",
+    "rstack_realmlp6avg_meta_c012_s10",
+    "rstack_realmlp6avg_meta_c014_s6",
+    "best_meta_bag_c008_s6"
+  ]
+}
